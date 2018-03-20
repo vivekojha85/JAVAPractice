@@ -41,7 +41,7 @@
 		<!--additivity Open, because this logger is also satisfied root, so will be printed two times, and two times are trace.-->
 		<logger name="com.vici.test.Log4j2Basic" level="debug"
 			additivity="false">
-			<appender-ref ref="Console" />
+			<appender-ref ref="RollingFile" />
 		</logger>
 		<Root level="DEBUG">
 			<appender-ref ref="log" />
