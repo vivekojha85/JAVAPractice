@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- trace < debug < info < warn < error < fatal -->
+<!--Set Log4j2 's own log level to warn -->
+<Configuration status="warn">
+	<!-- Variables in properties can be referenced in Appender by the ${variable name}, which is easy to manage for multiple Appender -->
+	<Properties>
+		<!-- Log file path and base name -->
+		<Property name="filename">/Users/Neha/STSLogs/error.log</Property>
+		<!-- The compressed suffix of the log file when it reaches the specified capacity -->
+		<Property name="filePattern">STSLogs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz</Property>
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<!--The console outputs only level and above information（onMatch），Other direct rejection（onMismatch） -->
+			<ThresholdFilter level="TRACE" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+
+		<!--The file prints out all the information, and this log is automatically emptied each time the program is run, 
+		determined by the Append property, which is also useful for temporary testing -->
+		<File name="log" fileName="/Users/Neha/STSLogs/test.log" append="false">
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n" />
+		</File>
+
+		<!--This will print out all the information, each time size exceeds size, this size log will automatically be stored 
+		in the year-month folder and compressed, as an archive -->
+		<RollingFile name="RollingFile" fileName="/Users/Neha/STSLogs/app.log"
+			filePattern="log/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n" />
+			<SizeBasedTriggeringPolicy size="1KB" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+
+		<!-- We only let this logger output trace information, the other is the error level-->
+		<!-- the level configuration here overrides the level of the corresponding name in root, 
+		such as root even if the configuration Error,console is also printed according to Trace--> 
+		<!--additivity Open, because this logger is also satisfied root, so will be printed two times, and two times are trace.-->
+		<logger name="com.vici.test.Log4j2Basic" level="debug"
+			additivity="false">
+			<appender-ref ref="Console" />
+		</logger>
+		<Root level="DEBUG">
+			<appender-ref ref="log" />
+			<appender-ref ref="RollingFile" />
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+</Configuration>
